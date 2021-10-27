@@ -1,0 +1,11 @@
+Benefits of PIR sensor
+- Detects motion relatively well indoors as well as during day and night time.
+- Consumes approxiametly 0.8 - 1.0 W which is much less than microwave sensor
+- Cheaper and more useful for electronic appliances that are compact. 
+
+Disadvantages of PIR sensor
+- Have lower sensitivity so need to account for noise.
+- Does not operate in temperatures greater than 35 Celsius.
+- Only works effectively in line of sight and has issues sensing corners of view.
+- Insensitive to very slow moving objects.
+

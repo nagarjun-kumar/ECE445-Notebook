@@ -1,0 +1,7 @@
+Benefits of UART
+- Can travel across distances up to 50 feet (perfect for us as we plan on using a maximum length of 10 m for our wires).
+- Each device uses its own independent clock cycle. 
+- Perfect for use with our 2x5 pin header
+
+Disadvantages of UART
+- Only suitable for connections between two devices (This is ideal for us as all of our connections will be between appliances and central hub).

@@ -1,0 +1,272 @@
+November 12, 2021
+
+ Final rendition of thermostat code. 
+ 
+ - Main modifications to this code were the incorporation of wire library to get faster feedback from temperature sensor. 
+ - Also implemented menu interface which will allow us to switch between different modes such as fan, heat, AC. 
+ - Also allows us to increment , decrement, and fine set temperature from computer. 
+ - Menu screen implemented using state machine. 
+
+#include <Wire.h>
+#define HEAT 5
+#define FAN 6
+#define COOL 4
+#define MENU 8
+#define UP 9
+#define DOWN 10
+void setup() {
+  pinMode(HEAT, OUTPUT);
+  pinMode(FAN, OUTPUT);
+  pinMode(COOL, OUTPUT);
+  pinMode(MENU, INPUT);
+  pinMode(UP, INPUT);
+  pinMode(DOWN, INPUT);
+  Serial.begin(9600);
+  Wire.begin();
+  Wire.beginTransmission(0x19);
+  Wire.write(1);
+  Wire.write(0);
+  Wire.write(0);
+  Wire.endTransmission();
+}
+int readTemperatureSensor() {
+  Wire.beginTransmission(0x19);
+  Wire.write(5);
+  Wire.endTransmission();
+  Wire.requestFrom(0x19, 2, true);
+  if (!Wire.available()) return -10000;
+  unsigned int msb = Wire.read();
+  if (!Wire.available()) return -10000;
+  unsigned int lsb = Wire.read();
+  int rawTempVal = (msb << 8) | lsb;
+//  Serial.print(msb);
+//  Serial.print(lsb);
+  rawTempVal &= 0x1fff;
+  if (rawTempVal & 0x1000) {
+    rawTempVal = -(rawTempVal & 0xfff);
+  }
+  return rawTempVal * 5 / 8;
+}
+int lastStateMenu = HIGH;
+int lastStateUp = HIGH;
+int lastStateDown = HIGH;
+unsigned long tempSensorTimeout = 0;
+int setTemp = 250;
+int menuState = 0;
+int menuEntryState = 0;
+int nrMenuEntries = 0;
+int currentMode = 0;
+int forcedOn = 0;
+const char *menu_states[] = {"Set temperature", "Set temperature (fine)", "Main Menu", "Mode (heat/cool)", "Set forced mode", "Set fan on/off"};
+const char *menu_2[] = {"Return", "Mode (heat/cool)", "On/Auto", "Fine set temperature", "Set fan on/off"};
+const char *menu_3[] = {"Cancel", "Heat", "Cool", "Off"};
+const char *menu_4[] = {"Cancel", "On", "Auto"};
+const char *menu_5[] = {"Cancel", "Off", "On"};
+void incrementTemperature(int delta) {
+  setTemp += delta;
+  if (setTemp < 0) setTemp = 0;
+  if (setTemp > 400) setTemp = 400;
+  Serial.print("Set temperature: ");
+  Serial.println(setTemp);
+}
+void enterMenu2() {
+  menuState = 2;
+  menuEntryState = 0;
+  nrMenuEntries = sizeof(menu_2)/sizeof(menu_2[0]);
+}
+void enterMenu3() {
+  menuState = 3;
+  menuEntryState = 0;
+  nrMenuEntries = sizeof(menu_3)/sizeof(menu_3[0]);
+}
+void enterMenu4() {
+  menuState = 4;
+  menuEntryState = 0;
+  nrMenuEntries = sizeof(menu_4)/sizeof(menu_4[0]);
+}
+void enterMenu5() {
+  menuState = 5;
+  menuEntryState = 0;
+  nrMenuEntries = sizeof(menu_5)/sizeof(menu_5[0]);
+}
+void enterMenu1() {
+  menuState = 1;
+  menuEntryState = 0;
+  nrMenuEntries = 0;
+}
+void enterMenu0() {
+  menuState = 0;
+  menuEntryState = 0;
+  nrMenuEntries = 0;
+}
+void loop() {
+  delay(10);
+  unsigned long currentTime = millis();
+  if (currentTime > tempSensorTimeout) {
+    tempSensorTimeout += 4000;
+    int temperature = readTemperatureSensor();
+    if (menuState == 0) {
+      Serial.print("Current temperature: ");
+      Serial.print(temperature);
+      Serial.print("\n");
+      Serial.print("Set temperature: ");
+      Serial.println(setTemp);
+    }
+    if (currentMode == 2) {
+      if ((temperature >= setTemp) || forcedOn) {
+        digitalWrite(COOL, HIGH);
+      } else {
+        digitalWrite(COOL, LOW);
+      }
+      digitalWrite(HEAT, LOW);
+    } else if (currentMode == 1) {
+      if ((temperature <= setTemp) || forcedOn) {
+        digitalWrite(HEAT, HIGH);
+      } else {
+        digitalWrite(HEAT, LOW);
+      }
+      digitalWrite(COOL, LOW);
+    }
+  }
+  int has_i = 0;
+  if (Serial.available() > 0) {
+    int serialByte = Serial.read();
+    switch (serialByte) {
+      case 'i':
+        has_i = 1;
+        break;
+      case 'd':
+        has_i = 2;
+        break;
+      case 'm':
+        has_i = 3;
+        break;
+    }
+  }
+  int curStateMenu = digitalRead(MENU);
+  int curStateUp = digitalRead(UP);
+  int curStateDown = digitalRead(DOWN);
+  int menuChanged = 0;
+  if ((has_i == 1) || ((curStateUp == LOW) && (lastStateUp == HIGH))) {
+    if (menuState == 0) {
+      incrementTemperature(10);
+    } else if (menuState == 1) {
+      incrementTemperature(1);
+    } else {
+      /* We're in a menu right now */
+      menuEntryState++;
+      if (menuEntryState >= nrMenuEntries) {
+        menuEntryState = 0;
+      }
+      menuChanged = 1;
+    }
+  }
+  if ((has_i == 2) || ((curStateDown == LOW) && (lastStateDown == HIGH))) {
+    if (menuState == 0) {
+      incrementTemperature(-10);
+    } else if (menuState == 1) {
+      incrementTemperature(-1);
+    } else {
+      menuEntryState--;
+      if (menuEntryState < 0) {
+        menuEntryState = nrMenuEntries - 1;
+      }
+      menuChanged = 1;
+    }
+  }
+  if ((has_i == 3) || ((curStateMenu == LOW) && (lastStateMenu == HIGhH))) {
+    switch (menuState) {
+      case 0:
+      case 1: /* Enter main menu */
+        enterMenu2();
+        break;
+      case 2: /* Selected something on the main menu */
+      switch (menuEntryState) {
+        case 0:
+          enterMenu0();
+          break;
+        case 1:
+          enterMenu3();
+          break;
+        case 2:
+          enterMenu4();
+          break;
+        case 3:
+          enterMenu1();
+          break;
+        case 4:
+          enterMenu5();
+          break;
+      }
+      break;
+      case 3: /* Selected something on the mode menu */
+        switch (menuEntryState) {
+          case 1:
+            currentMode = 1;
+            Serial.println("MODE SET TO HEAT");
+            break;
+          case 2:
+            currentMode = 2;
+            Serial.println("MODE SET TO COOL");
+            break;
+          case 3:
+            currentMode = 0;
+            Serial.println("MODE SET TO OFF");
+            break;
+        }
+        enterMenu2();
+        break;
+      case 4:
+        switch (menuEntryState) {
+          case 1:
+            forcedOn = 1;
+            Serial.println("FAN FORCED ON");
+            break;
+          case 2:
+            forcedOn = 0;
+            Serial.println("FAN NOT FORCED ON");
+            break;
+        }
+        enterMenu2();
+        break;
+      case 5:
+        switch (menuEntryState) {
+          case 2:
+            digitalWrite(FAN, HIGH);
+            Serial.println("FAN TURNED ON");
+            break;
+          case 1:
+            digitalWrite(FAN, LOW);
+            Serial.println("FAN TURNED OFF");
+            break;
+        }
+        enterMenu2();
+        break;
+    }
+    menuChanged = 1;
+  }
+  lastStateUp = curStateUp;
+  lastStateDown = curStateDown;
+  lastStateMenu = curStateMenu;
+  if (menuChanged) {
+    Serial.println("---------------");
+    Serial.println(menu_states[menuState]);
+    if (menuState == 2) {
+      Serial.println(menu_2[menuEntryState]);
+      if (menuEntryState == 1) {
+        const char *modes[] = {"off", "heat", "cool"};
+        Serial.print("current: ");
+        Serial.println(modes[currentMode]);
+      } else if (menuEntryState == 2) {
+        Serial.print("current: ");
+        Serial.println(forcedOn ? "on" : "auto");
+      }
+    } else if (menuState == 3) {
+      Serial.println(menu_3[menuEntryState]);
+    } else if (menuState == 4) {
+      Serial.println(menu_4[menuEntryState]);
+    } else if (menuState == 5) {
+      Serial.println(menu_5[menuEntryState]);
+    }
+  }
+}

@@ -1,0 +1,10 @@
+October 1st, 2021
+
+USB to UART converter that enables connectivity in applications that have a UART interface. 
+
+- 4 GP pins providing various functionality (GPIO, USBCFG, SSPND, Clock Output, ADC, DAC, interrupt detector). We will be using GPIO
+- 64 byte transmit
+- 64 byte receive
+- 64 byte buffer to handle data regardless of I2C baud rate. 
+- handles USB 2.0
+- All essential device configurations stored in flash memory.

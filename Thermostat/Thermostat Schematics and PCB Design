@@ -1,0 +1,14 @@
+October 7, 2021
+
+What I did today: 
+- Worked on creating circuit schematics for thermostat.
+- Essential parts of thermostat schematics were the GPIO headers, ATMEGA328P microcontroller (Arduino), MCP9804 temperature sensor.
+- 3 Relays added to design for future implementation of HVAC system to actually change the temperature.
+- 3 LEDs added to display various settings on thermostat (heat, AC, fan). 
+- GPIO headers used for UART interface with central hub. 
+- After schematics were complete, designed PCB on PCBWay. 
+- When designing PCB, it is essential to keep in mind placement on different parts and using as minimal length wiring as possible. 
+- Also important to make use of back of the board to free up space.
+
+What to do:
+- Next immediate work will be on soldering the thermostat. 

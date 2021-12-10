@@ -1,0 +1,181 @@
+November 29, 2021
+
+- Final code of optocoupler switcher. Main difference here is that capital letters relate to optocouplers on the relay board and lower case letters relate to the optocouplers
+powering the LEDs on the PCB. 
+- Two variables created to view GPIO state values for both optocouplers on relay board as well as on the PCB to display on the terminal. 
+
+#include <Wire.h>
+#define MOTION 5
+
+int GPIOstateA = 0;
+int GPIOstateB = 0;
+
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(MOTION, INPUT);
+  Serial.begin(9600);
+  Wire.begin();
+  Wire.beginTransmission(0x20);
+  Wire.write(0);
+  Wire.write(0);
+  Wire.endTransmission();
+  Wire.beginTransmission(0x20);
+  Wire.write(1);
+  Wire.write(0);
+  Wire.endTransmission();
+  Wire.beginTransmission(0x20);
+  Wire.write(0x12);
+  Wire.write(0x1);
+  Wire.endTransmission();  
+}
+
+void setGPIOstate(int val, int other) {
+ Wire.beginTransmission(0x20);
+ Wire.write(other ? 0x13 : 0x12);
+ Wire.write(val);
+ Wire.endTransmission();
+  Serial.println(other ? "GPIO state B: " : "GPIO state A: ");
+  Serial.println(val);
+ }
+int n = 0;
+void loop() {
+  // put your main code here, to run repeatedly:
+  delay(10);
+  int has_i = 0;
+  if (Serial.available() > 0){
+    int serialByte = Serial.read();
+    int other = 0;
+    int *which = &GPIOstateA;
+    if ((serialByte >= 'A') && (serialByte <= 'P')) {
+      serialByte |= 0x20;
+      which = &GPIOstateB;
+      other = 1;
+    }
+    switch (serialByte) {
+      case 'a':
+        has_i = 1;
+        break;
+      case 'b':
+        has_i = 2;
+        break;
+      case 'c':
+        has_i = 3;
+        break;
+      case 'd':
+        has_i = 4;
+        break;
+      case 'e':
+        has_i = 5;
+        break;
+      case 'f':
+        has_i = 6;
+        break;
+      case 'g':
+        has_i = 7;
+        break;
+      case 'h':
+        has_i = 8;
+        break;
+      case 'i':
+        has_i = 9;
+        break;
+      case 'j':
+        has_i = 10;
+        break;
+      case 'k':
+        has_i = 11;
+        break;
+      case 'l':
+        has_i = 12;
+        break;
+      case 'm':
+        has_i = 13;
+        break;
+      case 'n':
+        has_i = 14;
+        break;
+      case 'o':
+        has_i = 15;
+        break;
+      case 'p':
+        has_i = 16;
+        break;
+      
+    }
+    if (has_i == 1){
+        *which |= 0x80;
+        setGPIOstate(*which, other);        
+     }
+     else if (has_i == 2){
+        *which &= ~0x80;
+        setGPIOstate(*which, other);
+      }
+     else if (has_i == 3){
+      *which |= 0x01; 
+      setGPIOstate(*which, other);
+     }
+     else if (has_i == 4){
+      *which &= ~0x01;
+      setGPIOstate(*which, other);
+     }
+     else if (has_i == 5){
+        *which |= 0x02;
+        setGPIOstate(*which, other);
+     }
+     else if (has_i == 6){
+        *which &= ~0x02;
+        setGPIOstate(*which, other);
+     }
+     else if (has_i == 7){
+        *which |= 0x04;
+        setGPIOstate(*which, other); 
+     }
+     else if (has_i == 8){
+        *which &= ~0x04;
+        setGPIOstate(*which, other); 
+     }
+     else if (has_i == 9){
+        *which |= 0x08;
+        setGPIOstate(*which, other);
+     }
+     else if (has_i == 10){
+        *which &= ~0x08;
+        setGPIOstate(*which, other);
+     }
+     else if (has_i == 11){
+        *which |= 0x10;
+        setGPIOstate(*which, other);
+     }
+     else if (has_i == 12){
+        *which &= ~0x10;
+        setGPIOstate(*which, other);
+     }
+     else if (has_i == 13){
+        *which |= 0x20;
+        setGPIOstate(*which, other);
+     }
+     else if (has_i == 14){
+        *which &= ~0x20;
+        setGPIOstate(*which, other);
+     }
+     else if (has_i == 15){
+        *which |= 0x40;
+        setGPIOstate(*which, other);
+     }
+     else if (has_i == 16){
+        *which &= ~0x40;
+        setGPIOstate(*which, other);
+     }
+    }
+    n++;
+    if (n >= 100) {
+      n = 0;
+    int readMotion = digitalRead(MOTION);
+    if (readMotion == HIGH){
+      Serial.println("MOTION IS DETECTED");
+    } else {
+     Serial.println("NO MOTION IS DETECTED"); 
+    }
+    }
+}

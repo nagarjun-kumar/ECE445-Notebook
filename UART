@@ -1,7 +1,13 @@
+September 20, 2021
+
+Today I researched the advantages and disadvantages of UART to get more context of its benefits for our project. 
+
 Benefits of UART
 - Can travel across distances up to 50 feet (perfect for us as we plan on using a maximum length of 10 m for our wires).
 - Each device uses its own independent clock cycle. 
 - Perfect for use with our 2x5 pin header
+- Has a variety of applications and uses and is common in most appliances. 
 
 Disadvantages of UART
 - Only suitable for connections between two devices (This is ideal for us as all of our connections will be between appliances and central hub).
+- Not able to interface with computer as computer does not have port for UART. 

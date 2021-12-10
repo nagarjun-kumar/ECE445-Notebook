@@ -1,0 +1,11 @@
+October 6th, 2021
+
+Today I did some research on various temperature sensors available on digikey. These notes are specifically on the MCP9804 temperature sensor. 
+
+- Predicts temperature accurately from -40 to 125 degrees Celsius. Although there are not many verifications that we need to pass for the temperature sensor, it is 
+best to have proper accuracy for a wide range of temperatures. 
+
+- Min Voltage 2.7 V 
+- Max voltage 5 V
+- operating current 200 uA
+- 2 wire interface : I2C compatible 

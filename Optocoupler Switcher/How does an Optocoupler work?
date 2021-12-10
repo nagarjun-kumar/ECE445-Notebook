@@ -1,0 +1,14 @@
+October 4th, 2021
+
+Things I did today: Researched how a optocoupler switcher works. Here are some notes on my findings. 
+
+- An optocoupler is a semiconductor device that allows an electrical signal to be transmitted between two isolated circuits.
+- Two parts are used in an optocoupler: an LED that emits infrared light and a photosensitive device that detects light from the LED. 
+- The input circuit takes the incoming signal, determines if it is AC or DC and then uses this signal to turn on the LED. 
+- There are four configurations of optocoupler switchers: 
+- Photo-transistor - DC
+- Photo-Darlington - DC
+- Photo-SCR - AC
+- Photo-TRIAC - AC
+
+- The main difference between these four configurations is the photosensitive device being used. 

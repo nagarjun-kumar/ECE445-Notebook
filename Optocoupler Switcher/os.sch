@@ -1,3 +1,6 @@
+October 8th, 2021
+- Circuit schematics for optocoupler switcher. 
+
 EESchema Schematic File Version 4
 EELAYER 30 0
 EELAYER END

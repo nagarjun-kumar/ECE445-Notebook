@@ -6,6 +6,7 @@ October 1st, 2021
 - Total number of pins : 32
 - Minimum voltage is 3 V and max voltage is 3.6 V
 - 3 port USB hub
+- Withstands temperatures of 0-100 degrees Fº .
 
 
 This is ideal for us as we are only planning on creating 3 appliances for this project. However, it may not be ideal for our final design as we plan to have as many

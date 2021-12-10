@@ -1,6 +1,7 @@
 November 12, 2021
 
- Final rendition of thermostat code. 
+ 
+ What I worked on : Final rendition of thermostat code. 
  
  - Main modifications to this code were the incorporation of wire library to get faster feedback from temperature sensor. 
  - Also implemented menu interface which will allow us to switch between different modes such as fan, heat, AC. 

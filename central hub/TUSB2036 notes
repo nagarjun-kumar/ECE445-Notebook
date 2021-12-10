@@ -1,0 +1,14 @@
+October 1st, 2021
+
+- Today, I did research on various USB 2.0 Hub chips that would fit best with our design for the central hub. 
+- Below is key information I have found about TUSB2036 USB 2.0 hub. 
+
+- Total number of pins : 32
+- Minimum voltage is 3 V and max voltage is 3.6 V
+- 3 port USB hub
+
+
+This is ideal for us as we are only planning on creating 3 appliances for this project. However, it may not be ideal for our final design as we plan to have as many
+as 7 appliances connected to one central hub. This is to maximize the amount of appliances we can have without having to daisy chain central hubs together. Will 
+need to do more research to find USB hub with more ports than this one. 
+

@@ -1,0 +1,20 @@
+October 15, 2021
+
+What I did today: Studied various essentials needed to power and use ATMEGA328P chip. 
+
+Essential components:
+- A breadboard
+- 22 AWG wire
+- 7805 Voltage regulator
+- 2 LEDs
+- 2 220 Ohm resistors
+- 1 10k Ohm resistor
+- 2 10 uF capacitors
+- 16 MHz clock crystal
+- 2 22 pF capacitors
+
+All of these components are present in our earlier submitted PCB designs containing the ATMEGA328P chip i.e. all appliances. 
+
+- Best way to read and write data coming from our sensors is to read it serially using the Wire.h library. 
+- Data can be read through serial monitor present on Arduino IDE. 
+- Once code has been written for each microcontroller, bootload it onto the chip to be able to run the code. 

@@ -1,4 +1,5 @@
 October 14, 2021
+- Schematics for the central hub.
 
 EESchema Schematic File Version 4
 EELAYER 30 0

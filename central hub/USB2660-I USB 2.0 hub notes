@@ -1,0 +1,11 @@
+October 2nd, 2021
+
+Today i continued my research on various USB 2.0 Hub chips
+
+- Data Rate: 480 Mb/s
+- Min operating temp -40 degrees Celsius to max operating temp of 85 degrees Celsius. 
+- 7 port USB hub, allowing us to stack more appliances onto it. 
+- Min voltage : 3 V max voltage : 3.6 V
+
+This USB 2.0 hub is much more useful than the previous one i examined as this one has more ports, allowing for the customer to use more appliances
+without stacking central hubs onto each other. 

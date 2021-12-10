@@ -1,5 +1,7 @@
 September 22, 2021
 
+What I worked on: Today I worked on finding the best sensor to use to track motion. Compared the pros and cons of PIR sensor. 
+
 Benefits of PIR sensor
 - Detects motion relatively well indoors as well as during day and night time.
 - Consumes approxiametly 0.8 - 1.0 W which is much less than microwave sensor

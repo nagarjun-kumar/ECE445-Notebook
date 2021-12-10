@@ -1,0 +1,167 @@
+November 17, 2021
+
+- Initial code for optocoupler switcher. 
+- State machine that turns on and off each of the optocouplers depending on the input character that is detected. 
+- Initially tested to see if first and last optocouplers worked, then later implemented the rest of the 6 optocouplers. 
+- Also has simple code to read inputs from motion detector serially. 
+
+
+#include <Wire.h>
+#define MOTION 5
+
+int GPIOstate = 0;
+
+
+void setup() {
+  // put your setup code here, to run once:
+  pinMode(MOTION, INPUT);
+  Serial.begin(9600);
+  Wire.begin();
+  Wire.beginTransmission(0x20);
+  Wire.write(0);
+  Wire.write(0);
+  Wire.endTransmission();
+  Wire.beginTransmission(0x20);
+  Wire.write(0x12);
+  Wire.write(0x1);
+  Wire.endTransmission();  
+}
+
+void setGPIOstate(int val) {
+ Wire.beginTransmission(0x20);
+ Wire.write(0x12);
+ Wire.write(val);
+ Wire.endTransmission();
+  
+ }
+
+void loop() {
+  // put your main code here, to run repeatedly:
+  delay(1000);
+  int has_i = 0;
+  if (Serial.available() > 0){
+    int serialByte = Serial.read();
+    switch (serialByte) {
+      case 'a':
+        has_i = 1;
+        break;
+      case 'b':
+        has_i = 2;
+        break;
+      case 'c':
+        has_i = 3;
+        break;
+      case 'd':
+        has_i = 4;
+        break;
+      case 'e':
+        has_i = 5;
+        break;
+      case 'f':
+        has_i = 6;
+        break;
+      case 'g':
+        has_i = 7;
+        break;
+      case 'h':
+        has_i = 8;
+        break;
+      case 'i':
+        has_i = 9;
+        break;
+      case 'j':
+        has_i = 10;
+        break;
+      case 'k':
+        has_i = 11;
+        break;
+      case 'l':
+        has_i = 12;
+        break;
+      case 'm':
+        has_i = 13;
+        break;
+      case 'n':
+        has_i = 14;
+        break;
+      case 'o':
+        has_i = 15;
+        break;
+      case 'p':
+        has_i = 16;
+        break;
+      
+    }
+    if (has_i == 1){
+        GPIOstate |= 0x80;
+        setGPIOstate(GPIOstate);        
+     }
+     else if (has_i == 2){
+        GPIOstate &= ~0x80;
+        setGPIOstate(GPIOstate);
+      }
+     else if (has_i == 3){
+      GPIOstate |= 0x01; 
+      setGPIOstate(GPIOstate);
+     }
+     else if (has_i == 4){
+      GPIOstate &= ~0x01;
+      setGPIOstate(GPIOstate);
+     }
+     else if (has_i == 5){
+        GPIOstate |= 0x02;
+        setGPIOstate(GPIOstate);
+     }
+     else if (has_i == 6){
+        GPIOstate &= 0x02;
+        setGPIOstate(GPIOstate);
+     }
+     else if (has_i == 7){
+        GPIOstate |= 0x04;
+        setGPIOstate(GPIOstate); 
+     }
+     else if (has_i == 8){
+        GPIOstate &= 0x04;
+        setGPIOstate(GPIOstate); 
+     }
+     else if (has_i == 9){
+        GPIOstate |= 0x08;
+        setGPIOstate(GPIOstate);
+     }
+     else if (has_i == 10){
+        GPIOstate &= 0x08;
+        setGPIOstate(GPIOstate);
+     }
+     else if (has_i == 11){
+        GPIOstate |= 0x10;
+        setGPIOstate(GPIOstate);
+     }
+     else if (has_i == 12){
+        GPIOstate &= 0x10;
+        setGPIOstate(GPIOstate);
+     }
+     else if (has_i == 13){
+        GPIOstate |= 0x20;
+        setGPIOstate(GPIOstate);
+     }
+     else if (has_i == 14){
+        GPIOstate &= 0x20;
+        setGPIOstate(GPIOstate);
+     }
+     else if (has_i == 15){
+        GPIOstate |= 0x40;
+        setGPIOstate(GPIOstate);
+     }
+     else if (has_i == 16){
+        GPIOstate &= 0x40;
+        setGPIOstate(GPIOstate);
+     }
+    }
+    int readMotion = digitalRead(MOTION);
+    if (readMotion == HIGH){
+      Serial.println("MOTION IS DETECTED");
+    } else {
+     Serial.println("NO MOTION IS DETECTED"); 
+    }
+      
+}
